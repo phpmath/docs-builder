@@ -39,7 +39,12 @@ jobs:
           tools: composer
 
       - name: Install docs-builder
-        run: composer update --no-dev --no-interaction --prefer-dist --working-dir=.docs-builder
+        working-directory: .docs-builder
+        run: |
+          # Only the runtime dependencies are needed, so the development requirements are not resolved.
+          jq 'del(."require-dev")' composer.json > composer.json.tmp
+          mv composer.json.tmp composer.json
+          composer update --no-dev --no-interaction --prefer-dist
 
       - name: Build the documentation of every version
         run: php .docs-builder/bin/docs-builder build-all --library=${{ inputs.library }} --out=build/site
