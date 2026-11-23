@@ -23,7 +23,7 @@ use const ENT_XML1;
 final class Sitemap
 {
     /**
-     * @param string $baseUrl   The address of the documentation of the library, for example https://phpmath.github.io/matrix/.
+     * @param string $baseUrl   The address of the documentation, for example https://phpmath.github.io/matrix/.
      * @param string $version   The version whose pages are listed.
      * @param list<string> $pageFiles The file names of the pages, for example index.html.
      *
