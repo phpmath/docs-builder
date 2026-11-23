@@ -1,0 +1,57 @@
+name: Build and publish documentation
+
+# A reusable workflow. A library calls it from its own repository, see the caller in the README of docs-builder.
+# It builds the documentation of the master branch and of every tag with `docs-builder build-all`
+# and publishes the result on GitHub Pages.
+
+on:
+  workflow_call:
+    inputs:
+      library:
+        description: The library name, for example biginteger.
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout the library with its tags
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Checkout docs-builder
+        uses: actions/checkout@v6
+        with:
+          repository: phpmath/docs-builder
+          path: .docs-builder
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring
+          tools: composer
+
+      - name: Install docs-builder
+        run: composer update --no-dev --no-interaction --prefer-dist --working-dir=.docs-builder
+
+      - name: Build the documentation of every version
+        run: php .docs-builder/bin/docs-builder build-all --library=${{ inputs.library }} --out=build/site
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

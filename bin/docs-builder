@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use PHPMath\DocsBuilder\Cli;
+
+$autoload = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
+
+foreach ($autoload as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+
+exit((new Cli())->run(array_slice($argv, 1)));

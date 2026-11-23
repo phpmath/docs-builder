@@ -1,0 +1,62 @@
+{
+    "name": "phpmath/docs-builder",
+    "type": "library",
+    "description": "Builds the phpmath library documentation sites from Markdown.",
+    "keywords": [
+        "phpmath",
+        "documentation",
+        "markdown",
+        "static-site"
+    ],
+    "homepage": "https://github.com/phpmath/docs-builder",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Walter Tamboer",
+            "homepage": "https://waltertamboer.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "league/commonmark": "^2.8",
+        "symfony/yaml": "^7.4",
+        "tempest/highlight": "^2.0"
+    },
+    "require-dev": {
+        "phpmath/coding-standard": "^2.0",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^13.4"
+    },
+    "bin": [
+        "bin/docs-builder"
+    ],
+    "autoload": {
+        "psr-4": {
+            "PHPMath\\DocsBuilder\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPMath\\DocsBuilder\\Tests\\": "tests/unit"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --coverage-html build/phpunit-coverage/"
+        ],
+        "check-style": "vendor/bin/phpcs",
+        "fix-style": "vendor/bin/phpcbf",
+        "analyse": "vendor/bin/phpstan analyse --no-progress"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "process-timeout": 5000,
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
