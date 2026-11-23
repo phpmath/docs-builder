@@ -21,6 +21,13 @@ $library = $options->library;
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title><?= $e($page->title) ?> | phpmath/<?= $e($library) ?></title>
 <meta name="description" content="<?= $e($page->intro) ?>">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="phpmath">
+<meta property="og:title" content="<?= $e($page->title) ?> | phpmath/<?= $e($library) ?>">
+<meta property="og:description" content="<?= $e($page->intro) ?>">
+<meta property="og:image" content="https://phpmath.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="stylesheet" href="/assets/docs.css">
