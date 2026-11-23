@@ -10,7 +10,7 @@ same builder and the same theme, so all documentation looks and works the same.
 
 ## Documentation
 
-This README is the documentation. The documentation sites it builds are on [phpmath.github.io](https://phpmath.github.io). Every release is described on the [releases page](https://github.com/phpmath/docs-builder/releases).
+This README is the documentation. The documentation sites it builds are on [phpmath.github.io](https://phpmath.github.io). Every change is listed in the [changelog](CHANGELOG.md) and every release on the [releases page](https://github.com/phpmath/docs-builder/releases).
 
 ## Install
 
