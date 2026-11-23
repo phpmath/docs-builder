@@ -8,7 +8,9 @@ use PHPMath\DocsBuilder\Exception\InvalidDocumentException;
 
 use function array_diff;
 use function array_filter;
+use function array_map;
 use function array_values;
+use function basename;
 use function is_dir;
 use function ltrim;
 use function mkdir;
@@ -40,11 +42,12 @@ final readonly class SiteBuilder
         private string $docsDirectory,
         private string $branch,
         private string $output,
+        private ?string $baseUrl = null,
     ) {
     }
 
     /**
-     * Builds all versions and the version index.
+     * Builds all versions, the version index and the sitemap of the latest version.
      *
      * @return list<string> The built versions: the development branch first, then the tags from new to old.
      */
@@ -61,13 +64,22 @@ final readonly class SiteBuilder
 
         $versions = [$this->branch, ...$tags];
 
+        $pages = [];
+
         foreach ($versions as $version) {
-            $this->buildVersion($version);
+            $pages[$version] = $this->buildVersion($version);
         }
 
         $stable = array_values(array_filter($tags, static fn (string $tag): bool => !str_contains($tag, '-')));
+        $latest = $stable[0] ?? $this->branch;
 
-        VersionIndex::write($this->output, $stable[0] ?? $this->branch, $versions, $this->branch);
+        VersionIndex::write($this->output, $latest, $versions, $this->branch);
+        Sitemap::write(
+            $this->output,
+            $this->baseUrl ?? 'https://phpmath.github.io/' . $this->library . '/',
+            $latest,
+            $pages[$latest],
+        );
 
         return $versions;
     }
@@ -88,7 +100,8 @@ final readonly class SiteBuilder
         return $tags;
     }
 
-    private function buildVersion(string $ref): void
+    /** @return list<string> The file names of the pages of the version. */
+    private function buildVersion(string $ref): array
     {
         $directory = sys_get_temp_dir() . '/docs-builder-' . uniqid('', true);
 
@@ -102,7 +115,7 @@ final readonly class SiteBuilder
         try {
             $this->git->exportDirectory($ref, $this->docsDirectory, $directory);
 
-            (new Builder(new BuildOptions(
+            $written = (new Builder(new BuildOptions(
                 $this->library,
                 $ref,
                 $this->repository,
@@ -111,6 +124,8 @@ final readonly class SiteBuilder
                 $this->docsDirectory,
                 $this->branch,
             )))->build();
+
+            return array_map(basename(...), $written);
         } finally {
             $this->remove($directory);
         }

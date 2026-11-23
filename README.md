@@ -41,8 +41,9 @@ Build all versions of a repository, which is what CI does:
 $ vendor/bin/docs-builder build-all --library=biginteger --out=build/site
 ```
 
-This writes `build/site/<version>/*.html` for every version, plus `versions.json` for the version selector and
-an `index.html` that redirects to the latest version. The repository needs its tags (in GitHub Actions use
+This writes `build/site/<version>/*.html` for every version, plus `versions.json` for the version selector, an
+`index.html` that redirects to the latest version and a `sitemap.xml` that lists the pages of the latest version
+(with the address `https://phpmath.github.io/<library>/` as the base, change it with `--base-url`). The repository needs its tags (in GitHub Actions use
 `fetch-depth: 0`). Read the branch and the tags from git, not from the working tree, so uncommitted changes are
 not included.
 
@@ -61,6 +62,7 @@ $ vendor/bin/docs-builder index --out=build/site --latest=master --versions=mast
 | `build-all` | `--docs-dir` | The documentation folder in the repository. Defaults to `docs`. |
 | `build-all` | `--branch` | The development branch. Defaults to `master`. |
 | `build`, `build-all` | `--repository` | The GitHub repository. Defaults to `phpmath/<library>`. |
+| `build-all` | `--base-url` | The public address of the documentation, used in the sitemap. Defaults to `https://phpmath.github.io/<library>/`. |
 | `build` | `--version` | The version, used as the output folder and shown in the selector. |
 | `build` | `--source` | The folder with the Markdown files. |
 | `build` | `--edit-path` | The folder of the Markdown files in the repository, for the edit links. Defaults to `--source`. |

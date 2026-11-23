@@ -31,7 +31,7 @@ final readonly class Cli
           docs-builder build --library=NAME --version=VERSION --source=DIR --out=DIR
                              [--repository=OWNER/REPO] [--edit-path=PATH] [--edit-branch=master]
           docs-builder build-all --library=NAME --out=DIR [--repo-path=DIR] [--docs-dir=docs] [--branch=master]
-                                 [--repository=OWNER/REPO]
+                                 [--repository=OWNER/REPO] [--base-url=URL]
           docs-builder index --out=DIR --latest=VERSION --versions=V1,V2 [--development=VERSION]
 
         build       Builds the pages of one directory into DIR/VERSION.
@@ -99,6 +99,7 @@ final readonly class Cli
             $options['docs-dir'] ?? 'docs',
             $options['branch'] ?? 'master',
             $this->require($options, 'out'),
+            $options['base-url'] ?? null,
         ))->build();
 
         fwrite($this->stdout, 'Built the versions ' . implode(', ', $versions) . ".\n");

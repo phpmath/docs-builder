@@ -229,6 +229,81 @@ final class BuildTest extends TestCase
         self::assertStringContainsString('/edit/master/docs/index.md', $html);
     }
 
+    public function testWritesTheSitemapOfTheLatestVersion(): void
+    {
+        // Arrange
+        $out = $this->repository->directory->path . '/out';
+        $this->repository->tag('1.0.0');
+        $this->repository->write('docs/guide.md', "---\ntitle: Guide\n---\n\nSteps");
+        $this->repository->commit('Add a guide');
+        $this->repository->tag('1.1.0');
+        $builder = new SiteBuilder(
+            new GitRepository($this->repository->directory->path),
+            'biginteger',
+            'phpmath/biginteger',
+            'docs',
+            'master',
+            $out,
+        );
+
+        // Act
+        $builder->build();
+
+        // Assert
+        $sitemap = (string)file_get_contents($out . '/sitemap.xml');
+        self::assertStringContainsString('https://phpmath.github.io/biginteger/1.1.0/index.html', $sitemap);
+        self::assertStringContainsString('https://phpmath.github.io/biginteger/1.1.0/guide.html', $sitemap);
+        self::assertStringNotContainsString('/1.0.0/', $sitemap);
+        self::assertStringNotContainsString('/master/', $sitemap);
+    }
+
+    public function testSitemapUsesTheBranchWhenThereAreNoTags(): void
+    {
+        // Arrange
+        $out = $this->repository->directory->path . '/out';
+        $builder = new SiteBuilder(
+            new GitRepository($this->repository->directory->path),
+            'biginteger',
+            'phpmath/biginteger',
+            'docs',
+            'master',
+            $out,
+        );
+
+        // Act
+        $builder->build();
+
+        // Assert
+        self::assertStringContainsString(
+            'https://phpmath.github.io/biginteger/master/index.html',
+            (string)file_get_contents($out . '/sitemap.xml'),
+        );
+    }
+
+    public function testSitemapUsesTheGivenBaseUrl(): void
+    {
+        // Arrange
+        $out = $this->repository->directory->path . '/out';
+        $builder = new SiteBuilder(
+            new GitRepository($this->repository->directory->path),
+            'biginteger',
+            'phpmath/biginteger',
+            'docs',
+            'master',
+            $out,
+            'https://example.com/docs/',
+        );
+
+        // Act
+        $builder->build();
+
+        // Assert
+        self::assertStringContainsString(
+            'https://example.com/docs/master/index.html',
+            (string)file_get_contents($out . '/sitemap.xml'),
+        );
+    }
+
     public function testThrowsWhenTheBranchDoesNotExist(): void
     {
         // Arrange
